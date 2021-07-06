@@ -16,6 +16,13 @@ steps:
     displayName: 'Prep Environment'
     condition: succeededOrFailed()
 
+  - pwsh: |
+      Write-Host "CWD"
+      Get-Location
+      Write-Host "Visible Files"
+      Get-ChildItem -Recurse $(Build.SourcesDirectory)
+    displayName: Dump Visible Files
+
   - task: PythonScript@0
     displayName: 'Run Black'
     inputs:
