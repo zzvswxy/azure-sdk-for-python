@@ -14,8 +14,8 @@ from azure.cosmos.database import DatabaseProxy
 import config
 import heroes
 
-endpoint = 'https://simonmoreno-sql.documents.azure.com:443/'
-key = 'R3vEx7ug3QB4zVXP8AoFAd4NjalhWyP2ABZNvop3njHCdeoERg6qEnKFGWNk2aWm1ZSXzYmJr79ig1TufmN6ew=='
+endpoint = ''
+key = ''
 
 def creation():
 
