@@ -32,7 +32,6 @@ import asyncio
 from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
 from azure.core import AsyncPipelineClient
-from azure.core import PipelineClient
 from azure.core.exceptions import raise_with_traceback  # type: ignore
 from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
@@ -53,10 +52,8 @@ from .. import http_constants
 from .. import _query_iterable as query_iterable
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
-from .. import _synchronized_request as synchronized_request
 from . import _asynchronous_request as asynchronous_request
-from .. import _global_endpoint_manager as global_endpoint_manager
-from . import _global_endpoint_manager_async as global_endpoint_manager_async
+from . import _global_endpoint_manager_async as global_endpoint_manager
 from .._routing import routing_map_provider
 from ._retry_utility import ConnectionRetryPolicy
 from .. import _session
@@ -213,3 +210,145 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if not 'database_account' in self._setup_kwargs:
             self._setup_kwargs['database_account'] = await self._global_endpoint_manager._GetDatabaseAccount(**self._setup_kwargs)
             await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
+        
+    @staticmethod
+    def _return_undefined_or_empty_partition_key(is_system_key):
+        if is_system_key:
+            return _Empty
+        return _Undefined
+
+    async def GetDatabaseAccount(self, url_connection=None, **kwargs):
+        """Gets database account info.
+
+        :return:
+            The Database Account.
+        :rtype:
+            documents.DatabaseAccount
+
+        """
+        if url_connection is None:
+            url_connection = self.url_connection
+
+        initial_headers = dict(self.default_headers)
+        headers = base.GetHeaders(self, initial_headers, "get", "", "", "", {})  # path  # id  # type
+
+        request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+        result, self.last_response_headers = await self.__Get("", request_params, headers, **kwargs)
+        database_account = documents.DatabaseAccount()
+        database_account.DatabasesLink = "/dbs/"
+        database_account.MediaLink = "/media/"
+        if http_constants.HttpHeaders.MaxMediaStorageUsageInMB in self.last_response_headers:
+            database_account.MaxMediaStorageUsageInMB = self.last_response_headers[
+                http_constants.HttpHeaders.MaxMediaStorageUsageInMB
+            ]
+        if http_constants.HttpHeaders.CurrentMediaStorageUsageInMB in self.last_response_headers:
+            database_account.CurrentMediaStorageUsageInMB = self.last_response_headers[
+                http_constants.HttpHeaders.CurrentMediaStorageUsageInMB
+            ]
+        database_account.ConsistencyPolicy = result.get(constants._Constants.UserConsistencyPolicy)
+
+        # WritableLocations and ReadableLocations fields will be available only for geo-replicated database accounts
+        if constants._Constants.WritableLocations in result:
+            database_account._WritableLocations = result[constants._Constants.WritableLocations]
+        if constants._Constants.ReadableLocations in result:
+            database_account._ReadableLocations = result[constants._Constants.ReadableLocations]
+        if constants._Constants.EnableMultipleWritableLocations in result:
+            database_account._EnableMultipleWritableLocations = result[
+                constants._Constants.EnableMultipleWritableLocations
+            ]
+
+        self._useMultipleWriteLocations = (
+            self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
+        )
+        return database_account
+
+    async def ReadDatabase(self, database_link, options=None, **kwargs):
+        """Reads a database.
+
+        :param str database_link:
+            The link to the database.
+        :param dict options:
+            The request options for the request.
+        :return:
+            The Database that was read.
+        :rtype: dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(database_link)
+        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
+        return await self.Read(path, "dbs", database_id, None, options, **kwargs)
+
+    async def ReadItem(self, document_link, options=None, **kwargs):
+        """Reads a document.
+
+        :param str document_link:
+            The link to the document.
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The read Document.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(document_link)
+        document_id = base.GetResourceIdOrFullNameFromLink(document_link)
+        return await self.Read(path, "docs", document_id, None, options, **kwargs)
+
+    async def Read(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
+        """Reads a Azure Cosmos resource and returns it.
+
+        :param str path:
+        :param str typ:
+        :param str id:
+        :param dict initial_headers:
+        :param dict options:
+            The request options for the request.
+
+        :return:
+            The upserted Azure Cosmos resource.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        initial_headers = initial_headers or self.default_headers
+        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options)
+        # Read will use ReadEndpoint since it uses GET operation
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Read)
+        result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
+        return result
+
+    async def __Get(self, path, request_params, req_headers, **kwargs):
+        """Azure Cosmos 'GET' async http request.
+
+        :params str url:
+        :params str path:
+        :params dict req_headers:
+
+        :return:
+            Tuple of (result, headers).
+        :rtype:
+            tuple of (dict, dict)
+
+        """
+        request = self.pipeline_client.get(url=path, headers=req_headers)
+        return await asynchronous_request.AsynchronousRequest(
+            client=self,
+            request_params=request_params,
+            global_endpoint_manager=self._global_endpoint_manager,
+            connection_policy=self.connection_policy,
+            pipeline_client=self.pipeline_client,
+            request=request,
+            request_data=None,
+            **kwargs
+        )

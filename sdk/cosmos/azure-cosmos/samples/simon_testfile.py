@@ -1,12 +1,12 @@
 import sys
 sys.path.append(r"C:\Users\simonmoreno\Repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos")
 
-
 from azure.cosmos import container
 from azure.core.tracing.decorator import distributed_trace
 import asyncio
 from azure.cosmos import partition_key, cosmos_client
-from azure.cosmos.aio.cosmos_client import CosmosClient
+from azure.cosmos.aio.cosmos_client import CosmosClient as AsyncClient
+from azure.cosmos.cosmos_client import CosmosClient as SyncClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos.database import DatabaseProxy
@@ -14,8 +14,8 @@ from azure.cosmos.database import DatabaseProxy
 import config
 import heroes
 
-endpoint = ''
-key = ''
+endpoint = 'https://simonmoreno-sql.documents.azure.com:443/'
+key = 'R3vEx7ug3QB4zVXP8AoFAd4NjalhWyP2ABZNvop3njHCdeoERg6qEnKFGWNk2aWm1ZSXzYmJr79ig1TufmN6ew=='
 
 def creation():
 
@@ -136,14 +136,17 @@ def get_test_item():
     }
     return async_item
 
+db_name = "AsyncDB7"
+c_name = "AsyncContainer7"
+
 def create_test():
     client = cosmos_client.CosmosClient(endpoint, key)
-    db = client.create_database(id="AsyncDB")
+    db = client.create_database(id=db_name)
     container = db.create_container(
-        id="AsyncContainer",
+        id=c_name,
 		partition_key=PartitionKey(path="/id"))
     ids = []
-    for i in range(20):
+    for i in range(10):
         body = get_test_item()
         print(body.get("id"))
         ids.append(body.get("id"))
@@ -151,12 +154,46 @@ def create_test():
     return ids
 
 async def async_read_test():
-	# ids = create_test()
-	client = CosmosClient(endpoint, key)
-	# db = client.get_database_client(id="AsyncDB")
+	ids = create_test()
+	client = AsyncClient(endpoint, key)
+	if client: print(client)
+	db = client.get_database_client(db_name)
+	if db: print(db)
+	print(await db.read())
+	c = db.get_container_client(c_name)
+	if c: print(c)
+	print(ids[0])
+	item = await c.read_item(ids[0], partition_key=ids[0])
+	# x = await db.read()
+	# print(x)
+	print("SUCCEEDED")
+	print(item)
+	print("------------------ ERROR BELOW --------------------")
 	# container = db.get_container_client(id="AsyncContainer")
 	# print(container.read())
 
+async def async_with_read_test():
+	ids = create_test()
+	async with AsyncClient(endpoint, key) as client:
+		if client: print(client)
+		db = client.get_database_client(db_name)
+		if db: print(db)
+		print("POINT TWO")
+		# print(await db.read())
+		c = db.get_container_client(c_name)
+		if c: print(c)
+		item = await c.read_item(ids[0], partition_key=ids[0])
+		if item: print(item)
+	# # x = await db.read()
+	# # print(x)
+	# print("SUCCEEDED")
+	# print(item)
 
+def sync_read_test():
+	client = SyncClient(endpoint, key)
+	db = client.get_database_client(db_name)
+	print(db.read())
 
+# sync_read_test()
+# asyncio.run(async_with_read_test())
 asyncio.run(async_read_test())
