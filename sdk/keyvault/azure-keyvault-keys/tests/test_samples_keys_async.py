@@ -9,7 +9,7 @@ import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, KeysTestCase
-
+import os
 
 all_api_versions = get_decorator(is_async=True, only_vault=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
@@ -42,6 +42,9 @@ class TestExamplesKeyVault(KeysTestCase, KeyVaultTestCase):
     @all_api_versions()
     @client_setup
     async def test_example_key_crud_operations(self, key_client, **kwargs):
+        # if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+        #     pytest.skip("This test not supprot in usgov/china region. Follow up with service team")
+
         key_name = self.get_resource_name("key-name")
 
         # [START create_key]

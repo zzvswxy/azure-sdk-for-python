@@ -8,6 +8,7 @@ from dateutil import parser as date_parse
 import functools
 import json
 import logging
+import os
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -179,6 +180,9 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @client_setup
     async def test_key_crud_operations(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
+
+        # if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+        #     pytest.skip("This test not supprot in usgov/china region. Follow up with service team")
 
         # create ec key
         ec_key_name = self.get_resource_name("crud-ec-key")
@@ -555,6 +559,8 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @only_vault_7_3_preview()
     @client_setup
     async def test_key_rotation(self, client, **kwargs):
+
+        # if (".microsoftonline.com" in os.environ["AZURE_AUTHORITY_HOST"] or not self.is_live):
         key_name = self.get_resource_name("rotation-key")
         key = await self._create_rsa_key(client, key_name)
         rotated_key = await client.rotate_key(key_name)
@@ -567,6 +573,8 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @only_vault_7_3_preview()
     @client_setup
     async def test_key_rotation_policy(self, client, **kwargs):
+
+        # if (".microsoftonline.com" in os.environ["AZURE_AUTHORITY_HOST"] or not self.is_live):
         key_name = self.get_resource_name("rotation-key")
         await self._create_rsa_key(client, key_name)
 

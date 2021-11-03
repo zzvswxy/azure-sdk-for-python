@@ -14,6 +14,7 @@ from azure.ai.formrecognizer.aio import FormTrainingClient, DocumentModelAdminis
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+import os
 
 
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
@@ -272,6 +273,11 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     async def test_copy_model_fail_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id):
+
+        FORMRECOGNIZER_TEST_ENDPOINT = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]
+        if ".cognitiveservices.azure.us" in  FORMRECOGNIZER_TEST_ENDPOINT or ".cognitiveservices.azure.cn" in FORMRECOGNIZER_TEST_ENDPOINT:
+            pytest.skip("This test times out in usgov/china region. Follow up with service team")
+
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await poller.result()

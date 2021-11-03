@@ -3,8 +3,10 @@ trigger: none
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      BuildTargetingString: $(BuildTargetingString)
+      BuildTargetingString: azure-ai-textanalytics
       ServiceDirectory: textanalytics
+      DeployArmTemplate: true
+      SupportedClouds: 'Public,UsGov,China'
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
