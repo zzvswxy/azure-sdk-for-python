@@ -229,7 +229,7 @@
     },
     "EVENT_HUB_HOSTNAME": {
         "type": "string",
-        "value": "[concat(variables('eventHubsNamespace'), parameters('serviceBusEndpointSuffix'))]"
+        "value": "[concat(variables('eventHubsNamespace'), '.servicebus.usgovcloudapi.net')]"
     },
     "EVENT_HUB_CONN_STR": {
         "type": "string",
