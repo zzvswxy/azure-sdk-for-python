@@ -180,9 +180,8 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @client_setup
     async def test_key_crud_operations(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
-
         if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
-            pytest.skip("This test not supprot in usgov/china region. Follow up with service team")
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
 
         # create ec key
         ec_key_name = self.get_resource_name("crud-ec-key")
@@ -559,7 +558,6 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @only_vault_7_3_preview()
     @client_setup
     async def test_key_rotation(self, client, **kwargs):
-
         if (not ".microsoftonline.com" in os.environ["AZURE_AUTHORITY_HOST"] and self.is_live):
             pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
 
@@ -575,7 +573,6 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @only_vault_7_3_preview()
     @client_setup
     async def test_key_rotation_policy(self, client, **kwargs):
-
         if (not ".microsoftonline.com" in os.environ["AZURE_AUTHORITY_HOST"] and self.is_live):
             pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
 
