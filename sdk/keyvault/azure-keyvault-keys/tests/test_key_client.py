@@ -563,49 +563,53 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
     @client_setup
     def test_key_rotation(self, client, **kwargs):
 
-        if (".vault.azure.net" in os.environ["AZURE_KEYVAULT_URL"] or not self.is_live):
-            key_name = self.get_resource_name("rotation-key")
-            key = self._create_rsa_key(client, key_name)
-            rotated_key = client.rotate_key(key_name)
+        if (not ".microsoftonline.com" in os.environ["AZURE_AUTHORITY_HOST"] and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
 
-            # the rotated key should have a new ID, version, and key material (for RSA, n and e fields)
-            assert key.id != rotated_key.id
-            assert key.properties.version != rotated_key.properties.version
-            assert key.key.n != rotated_key.key.n
+        key_name = self.get_resource_name("rotation-key")
+        key = self._create_rsa_key(client, key_name)
+        rotated_key = client.rotate_key(key_name)
+
+        # the rotated key should have a new ID, version, and key material (for RSA, n and e fields)
+        assert key.id != rotated_key.id
+        assert key.properties.version != rotated_key.properties.version
+        assert key.key.n != rotated_key.key.n
 
     @only_vault_7_3_preview()
     @client_setup
     def test_key_rotation_policy(self, client, **kwargs):
 
-        if (".vault.azure.net" in os.environ["AZURE_KEYVAULT_URL"] or not self.is_live):
-            key_name = self.get_resource_name("rotation-key")
-            self._create_rsa_key(client, key_name)
+        if (not ".microsoftonline.com" in os.environ["AZURE_AUTHORITY_HOST"] and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
 
-            actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_after_create="P2M")]
-            updated_policy = client.update_key_rotation_policy(key_name, lifetime_actions=actions)
-            fetched_policy = client.get_key_rotation_policy(key_name)
-            assert updated_policy.expires_in is None
-            _assert_rotation_policies_equal(updated_policy, fetched_policy)
+        key_name = self.get_resource_name("rotation-key")
+        self._create_rsa_key(client, key_name)
 
-            updated_policy_actions = updated_policy.lifetime_actions[0]
-            fetched_policy_actions = fetched_policy.lifetime_actions[0]
-            assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
-            assert updated_policy_actions.time_after_create == "P2M"
-            assert updated_policy_actions.time_before_expiry is None
-            _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
+        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_after_create="P2M")]
+        updated_policy = client.update_key_rotation_policy(key_name, lifetime_actions=actions)
+        fetched_policy = client.get_key_rotation_policy(key_name)
+        assert updated_policy.expires_in is None
+        _assert_rotation_policies_equal(updated_policy, fetched_policy)
 
-            new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_before_expiry="P30D")]
-            new_policy = client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=new_actions)
-            new_fetched_policy = client.get_key_rotation_policy(key_name)
-            assert new_policy.expires_in == "P90D"
-            _assert_rotation_policies_equal(new_policy, new_fetched_policy)
+        updated_policy_actions = updated_policy.lifetime_actions[0]
+        fetched_policy_actions = fetched_policy.lifetime_actions[0]
+        assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
+        assert updated_policy_actions.time_after_create == "P2M"
+        assert updated_policy_actions.time_before_expiry is None
+        _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
 
-            new_policy_actions = new_policy.lifetime_actions[0]
-            new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
-            assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
-            assert new_policy_actions.time_after_create is None
-            assert new_policy_actions.time_before_expiry == "P30D"
-            _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
+        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_before_expiry="P30D")]
+        new_policy = client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=new_actions)
+        new_fetched_policy = client.get_key_rotation_policy(key_name)
+        assert new_policy.expires_in == "P90D"
+        _assert_rotation_policies_equal(new_policy, new_fetched_policy)
+
+        new_policy_actions = new_policy.lifetime_actions[0]
+        new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
+        assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
+        assert new_policy_actions.time_after_create is None
+        assert new_policy_actions.time_before_expiry == "P30D"
+        _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
 
     @all_api_versions()
     @client_setup

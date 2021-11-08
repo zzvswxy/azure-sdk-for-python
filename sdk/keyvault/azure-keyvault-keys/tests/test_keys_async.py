@@ -560,7 +560,9 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @client_setup
     async def test_key_rotation(self, client, **kwargs):
 
-        # if (".microsoftonline.com" in os.environ["AZURE_AUTHORITY_HOST"] or not self.is_live):
+        if (not ".microsoftonline.com" in os.environ["AZURE_AUTHORITY_HOST"] and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+
         key_name = self.get_resource_name("rotation-key")
         key = await self._create_rsa_key(client, key_name)
         rotated_key = await client.rotate_key(key_name)
@@ -574,7 +576,9 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @client_setup
     async def test_key_rotation_policy(self, client, **kwargs):
 
-        # if (".microsoftonline.com" in os.environ["AZURE_AUTHORITY_HOST"] or not self.is_live):
+        if (not ".microsoftonline.com" in os.environ["AZURE_AUTHORITY_HOST"] and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+
         key_name = self.get_resource_name("rotation-key")
         await self._create_rsa_key(client, key_name)
 
