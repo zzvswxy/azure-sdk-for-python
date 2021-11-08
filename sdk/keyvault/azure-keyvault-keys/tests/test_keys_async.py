@@ -181,8 +181,8 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     async def test_key_crud_operations(self, client, is_hsm, **kwargs):
         self.assertIsNotNone(client)
 
-        # if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
-        #     pytest.skip("This test not supprot in usgov/china region. Follow up with service team")
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team")
 
         # create ec key
         ec_key_name = self.get_resource_name("crud-ec-key")
