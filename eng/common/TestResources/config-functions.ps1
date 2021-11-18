@@ -54,3 +54,28 @@ function SetSubscriptionConfiguration([object]$subscriptionConfiguration)
     $serialized = $subscriptionConfiguration | ConvertTo-Json -Compress
     Write-Host "##vso[task.setvariable variable=SubscriptionConfiguration;]$serialized"
 }
+
+function UpdateSubscriptionConfiguration([object]$subscriptionConfigurationBase, [object]$subscriptionConfiguration)
+{
+      foreach ($pair in $subscriptionConfiguration.GetEnumerator()) {
+          if ($pair.Value -is [Hashtable]) {
+              if (!$subscriptionConfigurationBase.ContainsKey($pair.Name)) {
+                  $subscriptionConfigurationBase[$pair.Name] = @{}
+              }
+              foreach($nestedPair in $pair.Value.GetEnumerator()) {
+                  # Mark values as secret so we don't print json blobs containing secrets in the logs.
+                  # Prepend underscore to the variable name, so we can still access the variable names via environment
+                  # variables if they get set subsequently.
+                  Write-Host "##vso[task.setvariable variable=_$($nestedPair.Name);issecret=true;]$($nestedPair.Value)"
+                  $subscriptionConfigurationBase[$pair.Name][$nestedPair.Name] = $nestedPair.Value
+              }
+            } else {
+                Write-Host "##vso[task.setvariable variable=_$($pair.Name);issecret=true;]$($pair.Value)"
+                $subscriptionConfigurationBase[$pair.Name] = $pair.Value
+            }
+      }
+
+      $serialized = $subscriptionConfigurationBase | ConvertTo-Json -Compress
+      Write-Host ($subscriptionConfigurationBase | ConvertTo-Json)
+      Write-Host "##vso[task.setvariable variable=SubscriptionConfiguration;]$serialized"
+}
