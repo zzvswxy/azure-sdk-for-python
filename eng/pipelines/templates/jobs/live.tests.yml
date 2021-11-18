@@ -101,24 +101,6 @@ jobs:
           SubscriptionConfiguration: $(SubscriptionConfiguration)
           ArmTemplateParameters: $(ArmTemplateParameters)
 
-      - template: ../steps/build-test.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          CloudName: ${{ parameters.CloudConfig.Cloud }}
-          CoverageArg: $(CoverageArg)
-          EnvVars:
-            AZURE_RUN_MODE: 'Live' #Record, Playback
-            ${{ insert }}: ${{ parameters.EnvVars }}
-          PreSteps: ${{ parameters.PreSteps }}
-          PostSteps: ${{ parameters.PostSteps }}
-          PythonVersion: $(PythonVersion)
-          OSVmImage: $(OSVmImage)
-          ToxTestEnv: "whl"
-          AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          InjectedPackages: ${{ parameters.InjectedPackages }}
-          BuildDocs: ${{parameters.BuildDocs}}
-
       - template: /eng/common/TestResources/remove-test-resources.yml
         parameters:
           ServiceDirectory: '${{ parameters.ServiceDirectory }}'
