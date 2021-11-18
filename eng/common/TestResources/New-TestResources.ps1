@@ -224,8 +224,8 @@ function SetDeploymentOutputs([string]$serviceName, [object]$azContext, [object]
                 if (ShouldMarkValueAsSecret $serviceDirectoryPrefix $key $value $notSecretValues) {
                     # Treat all ARM template output variables as secrets since "SecureString" variables do not set values.
                     # In order to mask secrets but set environment variables for any given ARM template, we set variables twice as shown below.
-                    Write-Host "Setting variable as secret '$key': $value"
                     Write-Host "##vso[task.setvariable variable=_$key;issecret=true;]$value"
+                    Write-Host "Setting variable as secret '$key': $value"
                 } else {
                     Write-Host "Setting variable '$key': $value"
                     $notSecretValues += $value

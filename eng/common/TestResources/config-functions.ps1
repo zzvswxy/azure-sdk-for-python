@@ -12,7 +12,14 @@ function ShouldMarkValueAsSecret([string]$serviceDirectoryPrefix, [string]$key, 
         "ENVIRONMENT",
         "AZURE_AUTHORITY_HOST",
         "RESOURCE_MANAGER_URL",
-        "SERVICE_MANAGEMENT_URL"
+        "SERVICE_MANAGEMENT_URL",
+        # Parameters
+        "Environment",
+        "SubscriptionId",
+        "TenantId",
+        "TestApplicationId",
+        "TestApplicationOid",
+        "ProvisionerApplicationId"
     )
 
     $suffix1 = $key -replace $serviceDirectoryPrefix, ""
