@@ -1,4 +1,4 @@
-function ShouldMarkValueAsSecret([string]$serviceDirectoryPrefix, [string]$key, [string]$value, [array]$allowedValues)
+function ShouldMarkValueAsSecret([string]$serviceDirectoryPrefix, [string]$key, [string]$value, [array]$allowedValues = @())
 {
     $logOutputNonSecret = @(
         # Environment Variables
@@ -37,16 +37,21 @@ function ShouldMarkValueAsSecret([string]$serviceDirectoryPrefix, [string]$key, 
 
 function SetSubscriptionConfiguration([object]$subscriptionConfiguration)
 {
+    $notSecretValues = @()
     foreach($pair in $subscriptionConfiguration.GetEnumerator()) {
         if ($pair.Value -is [Hashtable]) {
             foreach($nestedPair in $pair.Value.GetEnumerator()) {
                 # Mark values as secret so we don't print json blobs containing secrets in the logs.
                 # Prepend underscore to the variable name, so we can still access the variable names via environment
                 # variables if they get set subsequently.
-                Write-Host "##vso[task.setvariable variable=_$($nestedPair.Name);issecret=true;]$($nestedPair.Value)"
+                if (ShouldMarkValueAsSecret "AZURE_" $nestedPair.Name $nestedPair.Value) {
+                    Write-Host "##vso[task.setvariable variable=_$($nestedPair.Name);issecret=true;]$($nestedPair.Value)"
+                }
             }
         } else {
-            Write-Host "##vso[task.setvariable variable=_$($pair.Name);issecret=true;]$($pair.Value)"
+            if (ShouldMarkValueAsSecret "AZURE_" $nestedPair.Name $nestedPair.Value) {
+                Write-Host "##vso[task.setvariable variable=_$($pair.Name);issecret=true;]$($pair.Value)"
+            }
         }
     }
 
@@ -57,23 +62,27 @@ function SetSubscriptionConfiguration([object]$subscriptionConfiguration)
 
 function UpdateSubscriptionConfiguration([object]$subscriptionConfigurationBase, [object]$subscriptionConfiguration)
 {
-      foreach ($pair in $subscriptionConfiguration.GetEnumerator()) {
-          if ($pair.Value -is [Hashtable]) {
-              if (!$subscriptionConfigurationBase.ContainsKey($pair.Name)) {
-                  $subscriptionConfigurationBase[$pair.Name] = @{}
+        foreach ($pair in $subscriptionConfiguration.GetEnumerator()) {
+            if ($pair.Value -is [Hashtable]) {
+                if (!$subscriptionConfigurationBase.ContainsKey($pair.Name)) {
+                    $subscriptionConfigurationBase[$pair.Name] = @{}
+                }
+                foreach($nestedPair in $pair.Value.GetEnumerator()) {
+                    # Mark values as secret so we don't print json blobs containing secrets in the logs.
+                    # Prepend underscore to the variable name, so we can still access the variable names via environment
+                    # variables if they get set subsequently.
+                    if (ShouldMarkValueAsSecret "AZURE_" $nestedPair.Name $nestedPair.Value) {
+                        Write-Host "##vso[task.setvariable variable=_$($nestedPair.Name);issecret=true;]$($nestedPair.Value)"
+                    }
+                    $subscriptionConfigurationBase[$pair.Name][$nestedPair.Name] = $nestedPair.Value
+                }
+              } else {
+                    if (ShouldMarkValueAsSecret "AZURE_" $nestedPair.Name $nestedPair.Value) {
+                        Write-Host "##vso[task.setvariable variable=_$($pair.Name);issecret=true;]$($pair.Value)"
+                    }
+                    $subscriptionConfigurationBase[$pair.Name] = $pair.Value
               }
-              foreach($nestedPair in $pair.Value.GetEnumerator()) {
-                  # Mark values as secret so we don't print json blobs containing secrets in the logs.
-                  # Prepend underscore to the variable name, so we can still access the variable names via environment
-                  # variables if they get set subsequently.
-                  Write-Host "##vso[task.setvariable variable=_$($nestedPair.Name);issecret=true;]$($nestedPair.Value)"
-                  $subscriptionConfigurationBase[$pair.Name][$nestedPair.Name] = $nestedPair.Value
-              }
-            } else {
-                Write-Host "##vso[task.setvariable variable=_$($pair.Name);issecret=true;]$($pair.Value)"
-                $subscriptionConfigurationBase[$pair.Name] = $pair.Value
-            }
-      }
+        }
 
       $serialized = $subscriptionConfigurationBase | ConvertTo-Json -Compress
       Write-Host ($subscriptionConfigurationBase | ConvertTo-Json)
