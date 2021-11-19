@@ -28,16 +28,11 @@ function ShouldMarkValueAsSecret([string]$serviceDirectoryPrefix, [string]$key, 
     $suffix1 = $key -replace $serviceDirectoryPrefix, ""
     $suffix2 = $key -replace "AZURE_", ""
     $variants = @($key, $suffix1, $suffix2)
-    Write-Host "$serviceDirectoryPrefix"
-    Write-Host "$key $suffix1 $suffix2"
-    Write-Host "$($allowedValues | ConvertTo-Json)"
     if ($variants | Where-Object { $logOutputNonSecret -contains $_ }) {
-        Write-Host "false for variant `n"
         return $false
     }
 
     if ($allowedValues -contains $value) {
-        Write-Host "false for allowed `n"
         return $false
     }
 
