@@ -13,6 +13,7 @@ function ShouldMarkValueAsSecret([string]$serviceDirectoryPrefix, [string]$key, 
         "AZURE_AUTHORITY_HOST",
         "RESOURCE_MANAGER_URL",
         "SERVICE_MANAGEMENT_URL",
+        "ENDPOINT_SUFFIX",
         # Parameters
         "Environment",
         "SubscriptionId",
@@ -44,7 +45,6 @@ function ShouldMarkValueAsSecret([string]$serviceDirectoryPrefix, [string]$key, 
 
 function SetSubscriptionConfiguration([object]$subscriptionConfiguration)
 {
-    $notSecretValues = @()
     foreach($pair in $subscriptionConfiguration.GetEnumerator()) {
         if ($pair.Value -is [Hashtable]) {
             foreach($nestedPair in $pair.Value.GetEnumerator()) {
@@ -56,7 +56,7 @@ function SetSubscriptionConfiguration([object]$subscriptionConfiguration)
                 }
             }
         } else {
-            if (ShouldMarkValueAsSecret "AZURE_" $nestedPair.Name $nestedPair.Value) {
+            if (ShouldMarkValueAsSecret "AZURE_" $pair.Name $pair.Value) {
                 Write-Host "##vso[task.setvariable variable=_$($pair.Name);issecret=true;]$($pair.Value)"
             }
         }
