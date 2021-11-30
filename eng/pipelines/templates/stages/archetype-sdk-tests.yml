@@ -54,7 +54,10 @@ parameters:
     type: object
     default:
       Public:
-        SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        SubscriptionConfigurations:
+          - $(sub-config-gov-test-resources-test)
+          - $(sub-config-azure-cloud-test-resources-test)
+          - $(sub-config-azure-cloud-test-resources-preview-test)
       Preview:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
       Canary:
