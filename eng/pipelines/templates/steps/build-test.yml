@@ -27,6 +27,11 @@ steps:
       gci -r $(Build.ArtifactStagingDirectory)
     displayName: Dump Artifact Directory
 
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Upload Package SBOM'
+    inputs:
+      BuildDropPath: $(Build.ArtifactStagingDirectory)
+
   - template: /eng/pipelines/templates/steps/use-python-version.yml
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
