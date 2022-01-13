@@ -16,11 +16,20 @@ steps:
   - task: PythonScript@0
     displayName: 'Install ${{ parameters.versionSpec }} from Python Manifest If Necessary'
     inputs:
-     scriptPath: 'scripts/devops_tasks/install_python_version.py'
-     arguments: '${{ parameters.versionSpec }} --installer_folder="../_pyinstaller'
+      scriptPath: 'scripts/devops_tasks/install_python_version.py'
+      arguments: '${{ parameters.versionSpec }} --installer_folder="../_pyinstaller'
 
-  # use
+  # UsePythonVersionTask is conditional based upon issue microsoft/azure-pipelines-tasks#15232.
+  # Read submitted PR microsoft/azure-pipelines-tasks##15553 for further context as to the reasoning here.
+  - task: PythonScript@0
+    displayName: 'PyPy3 Specific Path Prepend'
+    condition: and(succeeded(), not(contains('${{ parameters.versionSpec }}', 'pypy3')))
+    inputs:
+      scriptPath: 'scripts/devops_tasks/prepend_pypy_version.py'
+      arguments: '${{ parameters.versionSpec }}'
+
   - task: UsePythonVersion@0
     displayName: "Use Python $(PythonVersion)"
+    condition: and(succeeded(), not(contains('${{ parameters.versionSpec }}', 'pypy3')))
     inputs:
       versionSpec: ${{ parameters.versionSpec }}
