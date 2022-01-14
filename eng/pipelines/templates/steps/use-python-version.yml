@@ -25,7 +25,7 @@ steps:
     displayName: 'PyPy3 Specific Path Prepend'
     condition: and(succeeded(), not(contains('${{ parameters.versionSpec }}', 'pypy3')))
     inputs:
-      scriptPath: 'scripts/devops_tasks/prepend_pypy_version.py'
+      scriptPath: 'scripts/devops_tasks/use_pypy_version.py'
       arguments: '${{ parameters.versionSpec }}'
 
   - task: UsePythonVersion@0

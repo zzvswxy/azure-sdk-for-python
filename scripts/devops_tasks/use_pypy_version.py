@@ -17,12 +17,26 @@ from packaging.version import InvalidVersion
 MAX_INSTALLER_RETRY = 3
 CURRENT_UBUNTU_VERSION = "20.04"  # full title is ubuntu-20.04
 MAX_PRECACHED_VERSION = "3.10.0"
+HOSTEDTOOLCACHE = os.getenv("AGENT_TOOLSDIRECTORY")
 
-HOSTEDTOOLCACHE = os.getenv("")
+def walk_directory_for_pattern(
+    target_directory,
+    spec
+):
+    target_directory = os.path.normpath(HOSTEDTOOLCACHE)
+    print("Searching hosted tool cache {}".format(target_directory))
+    located_folders = []
 
+    # walk the folders, filter to the patterns established
+    for folder, subfolders, files in os.walk(target_directory):
+        for file in files:
+            file_path = os.path.join(folder, file)
+            print(file_path)
+
+    return located_folders
 
 def find_pypy_version(spec):
-    discovered_locations = ["wat"]  # do work here
+    discovered_locations = walk_directory_for_pattern(spec)
 
     if not discovered_installer_location:
         print(
@@ -46,7 +60,7 @@ if __name__ == "__main__":
         nargs="?",
         help=("The version specifier passed in to the UsePythonVersion extended task."),
     )
-
+    
     args = parser.parse_args()
     max_precached_version = Version(MAX_PRECACHED_VERSION)
     try:
