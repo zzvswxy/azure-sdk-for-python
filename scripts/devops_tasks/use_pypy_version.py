@@ -19,12 +19,10 @@ CURRENT_UBUNTU_VERSION = "20.04"  # full title is ubuntu-20.04
 MAX_PRECACHED_VERSION = "3.10.0"
 HOSTEDTOOLCACHE = os.getenv("AGENT_TOOLSDIRECTORY")
 
-def walk_directory_for_pattern(
-    target_directory,
-    spec
-):
+def walk_directory_for_pattern(spec):
     target_directory = os.path.normpath(HOSTEDTOOLCACHE)
-    print("Searching hosted tool cache {}".format(target_directory))
+    pypy_spec = "pypy" + spec
+    print("Searching for {} in hosted tool cache {}".format(pypy_spec, target_directory))
     located_folders = []
 
     # walk the folders, filter to the patterns established
