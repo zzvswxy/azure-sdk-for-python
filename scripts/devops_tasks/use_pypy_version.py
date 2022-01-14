@@ -64,7 +64,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     max_precached_version = Version(MAX_PRECACHED_VERSION)
     try:
-        version_from_spec = Version(args.version_spec)
+        version_from_spec = Version(args.version_spec.replace("pypy", ""))
     except InvalidVersion:
         print("Invalid Version '{}'. Exiting".format(args.version_spec))
         exit(1)
