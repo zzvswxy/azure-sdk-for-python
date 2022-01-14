@@ -134,6 +134,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     max_precached_version = Version(MAX_PRECACHED_VERSION)
+
+    if args.version_spec.starts_with("pypy"):
+        print("Version {} is unsupported by the gh actions python manifest. Skipping.")
+        exit(0)
+
     try:
         version_from_spec = Version(args.version_spec)
     except InvalidVersion:
