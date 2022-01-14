@@ -21,8 +21,8 @@ HOSTEDTOOLCACHE = os.getenv("AGENT_TOOLSDIRECTORY")
 
 def walk_directory_for_pattern(spec):
     target_directory = os.path.normpath(HOSTEDTOOLCACHE)
-    pypy_spec = "pypy" + spec
-    print("Searching for {} in hosted tool cache {}".format(pypy_spec, target_directory))
+    
+    print("Searching for {} in hosted tool cache {}".format(spec, target_directory))
     located_folders = []
 
     # walk the folders, filter to the patterns established
@@ -34,12 +34,13 @@ def walk_directory_for_pattern(spec):
     return located_folders
 
 def find_pypy_version(spec):
+    pypy_spec = "pypy" + str(spec)
     discovered_locations = walk_directory_for_pattern(spec)
 
-    if not discovered_installer_location:
+    if not discovered_locations:
         print(
             "Unable to locate a valid executable folder for {}. Examined folder {}".format(
-                spec, HOSTEDTOOLCACHE
+                pypy_spec, HOSTEDTOOLCACHE
             )
         )
         exit(1)
