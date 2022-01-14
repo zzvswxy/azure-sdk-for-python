@@ -4,3 +4,4 @@ variables:
   AzureSDKCondaChannel: https://azuresdkconda.blob.core.windows.net/channel1/
   Package.EnableSBOMSigning: true
   Skip.Analyze: true
+  Skip.BuildDocs: true
