@@ -36,6 +36,11 @@ steps:
       scriptPath: 'scripts/devops_tasks/use_pypy_version.py'
       arguments: '${{ parameters.versionSpec }}'
 
+  - pwsh: |
+      python -m ensurepip --default-pip
+    displayName: Ensure PyPy pip is registered appropriately
+    condition: and(succeeded(), eq(variables.ManualInstallNecessary, 'true'))
+
   - task: UsePythonVersion@0
     displayName: "Use Python $(PythonVersion)"
     condition: and(succeeded(), not(eq(variables.ManualInstallNecessary, 'true')))
