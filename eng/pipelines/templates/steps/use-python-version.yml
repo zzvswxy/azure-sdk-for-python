@@ -42,6 +42,14 @@ steps:
     displayName: Ensure PyPy pip is registered appropriately
     condition: and(succeeded(), eq(variables.ManualInstallNecessary, 'true'))
 
+  - script: |
+      which pip
+      echo $PATH
+      echo $PYTHON_PATH
+      echo $PYTHONPATH
+    displayName: Interrogate env settings
+    condition: and(succeeded(), eq(variables.ManualInstallNecessary, 'true'))
+
   - task: UsePythonVersion@0
     displayName: "Use Python $(PythonVersion)"
     condition: and(succeeded(), not(eq(variables.ManualInstallNecessary, 'true')))
