@@ -484,6 +484,8 @@ try {
     # Determine the Azure context that the script is running in.
     $context = Get-AzContext;
 
+    Write-Host "Provisioner Application OID: $ProvisionerApplicationOid"
+
     # Make sure the provisioner OID is set so we can pass it through to the deployment.
     if (!$ProvisionerApplicationId -and !$ProvisionerApplicationOid) {
         if ($context.Account.Type -eq 'User') {
