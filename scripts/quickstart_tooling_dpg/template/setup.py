@@ -5,13 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-
 import os
 import re
-
 from setuptools import setup, find_packages
-
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "{{ package_name }}"
@@ -19,7 +15,6 @@ PACKAGE_PPRINT_NAME = "{{ package_pprint_name }}"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
-
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
@@ -56,14 +51,13 @@ setup(
     packages=find_packages(
         exclude=[
             # Exclude packages that will be covered by PEP420 or nspkg
-            "azure",
-            "azure.{{ folder_second }}",
+            "{{ folder_first }}",
+            "{{ folder_first }}.{{ folder_second }}",
         ]
     ),
     install_requires=[
-        "azure-core<2.0.0,>=1.19.1",
+        "azure-core<2.0.0,>=1.23.0",
         "msrest>=0.6.21",
-        'six>=1.11.0',
     ],
     python_requires=">=3.6",
 )
