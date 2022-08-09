@@ -6,50 +6,28 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CheckNameAvailabilityRequest
-    from ._models_py3 import CheckNameAvailabilityResponse
-    from ._models_py3 import DetailedInformation
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import Extension
-    from ._models_py3 import ExtensionListResponse
-    from ._models_py3 import FarmBeats
-    from ._models_py3 import FarmBeatsExtension
-    from ._models_py3 import FarmBeatsExtensionListResponse
-    from ._models_py3 import FarmBeatsListResponse
-    from ._models_py3 import FarmBeatsUpdateRequestModel
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import UnitSystemsInfo
-except (SyntaxError, ImportError):
-    from ._models import CheckNameAvailabilityRequest  # type: ignore
-    from ._models import CheckNameAvailabilityResponse  # type: ignore
-    from ._models import DetailedInformation  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import Extension  # type: ignore
-    from ._models import ExtensionListResponse  # type: ignore
-    from ._models import FarmBeats  # type: ignore
-    from ._models import FarmBeatsExtension  # type: ignore
-    from ._models import FarmBeatsExtensionListResponse  # type: ignore
-    from ._models import FarmBeatsListResponse  # type: ignore
-    from ._models import FarmBeatsUpdateRequestModel  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import UnitSystemsInfo  # type: ignore
+from ._models_py3 import CheckNameAvailabilityRequest
+from ._models_py3 import CheckNameAvailabilityResponse
+from ._models_py3 import DetailedInformation
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Extension
+from ._models_py3 import ExtensionListResponse
+from ._models_py3 import FarmBeats
+from ._models_py3 import FarmBeatsExtension
+from ._models_py3 import FarmBeatsExtensionListResponse
+from ._models_py3 import FarmBeatsListResponse
+from ._models_py3 import FarmBeatsUpdateRequestModel
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import UnitSystemsInfo
+
 
 from ._azure_agri_food_rp_service_enums import (
     ActionType,
@@ -58,7 +36,9 @@ from ._azure_agri_food_rp_service_enums import (
     Origin,
     ProvisioningState,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'CheckNameAvailabilityRequest',
     'CheckNameAvailabilityResponse',
@@ -87,3 +67,5 @@ __all__ = [
     'Origin',
     'ProvisioningState',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

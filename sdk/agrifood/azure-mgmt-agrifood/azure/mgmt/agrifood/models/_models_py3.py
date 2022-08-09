@@ -7,21 +7,23 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._azure_agri_food_rp_service_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class CheckNameAvailabilityRequest(msrest.serialization.Model):
     """The check availability request body.
 
-    :param name: The name of the resource for which availability needs to be checked.
-    :type name: str
-    :param type: The resource type.
-    :type type: str
+    :ivar name: The name of the resource for which availability needs to be checked.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
     """
 
     _attribute_map = {
@@ -36,6 +38,12 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
         type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the resource for which availability needs to be checked.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
         super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
         self.name = name
         self.type = type
@@ -44,13 +52,13 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
 class CheckNameAvailabilityResponse(msrest.serialization.Model):
     """The check availability result.
 
-    :param name_available: Indicates if the resource name is available.
-    :type name_available: bool
-    :param reason: The reason why the given name is not available. Possible values include:
-     "Invalid", "AlreadyExists".
-    :type reason: str or ~azure.mgmt.agrifood.models.CheckNameAvailabilityReason
-    :param message: Detailed reason why the given name is available.
-    :type message: str
+    :ivar name_available: Indicates if the resource name is available.
+    :vartype name_available: bool
+    :ivar reason: The reason why the given name is not available. Known values are: "Invalid",
+     "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.agrifood.models.CheckNameAvailabilityReason
+    :ivar message: Detailed reason why the given name is available.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -63,10 +71,19 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
         self,
         *,
         name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "CheckNameAvailabilityReason"]] = None,
+        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name_available: Indicates if the resource name is available.
+        :paramtype name_available: bool
+        :keyword reason: The reason why the given name is not available. Known values are: "Invalid",
+         "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.agrifood.models.CheckNameAvailabilityReason
+        :keyword message: Detailed reason why the given name is available.
+        :paramtype message: str
+        """
         super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
@@ -76,16 +93,16 @@ class CheckNameAvailabilityResponse(msrest.serialization.Model):
 class DetailedInformation(msrest.serialization.Model):
     """Model to capture detailed information for farmBeatsExtensions.
 
-    :param api_name: ApiName available for the farmBeatsExtension.
-    :type api_name: str
-    :param custom_parameters: List of customParameters.
-    :type custom_parameters: list[str]
-    :param platform_parameters: List of platformParameters.
-    :type platform_parameters: list[str]
-    :param units_supported: Unit systems info for the data provider.
-    :type units_supported: ~azure.mgmt.agrifood.models.UnitSystemsInfo
-    :param api_input_parameters: List of apiInputParameters.
-    :type api_input_parameters: list[str]
+    :ivar api_name: ApiName available for the farmBeatsExtension.
+    :vartype api_name: str
+    :ivar custom_parameters: List of customParameters.
+    :vartype custom_parameters: list[str]
+    :ivar platform_parameters: List of platformParameters.
+    :vartype platform_parameters: list[str]
+    :ivar units_supported: Unit systems info for the data provider.
+    :vartype units_supported: ~azure.mgmt.agrifood.models.UnitSystemsInfo
+    :ivar api_input_parameters: List of apiInputParameters.
+    :vartype api_input_parameters: list[str]
     """
 
     _attribute_map = {
@@ -102,10 +119,22 @@ class DetailedInformation(msrest.serialization.Model):
         api_name: Optional[str] = None,
         custom_parameters: Optional[List[str]] = None,
         platform_parameters: Optional[List[str]] = None,
-        units_supported: Optional["UnitSystemsInfo"] = None,
+        units_supported: Optional["_models.UnitSystemsInfo"] = None,
         api_input_parameters: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword api_name: ApiName available for the farmBeatsExtension.
+        :paramtype api_name: str
+        :keyword custom_parameters: List of customParameters.
+        :paramtype custom_parameters: list[str]
+        :keyword platform_parameters: List of platformParameters.
+        :paramtype platform_parameters: list[str]
+        :keyword units_supported: Unit systems info for the data provider.
+        :paramtype units_supported: ~azure.mgmt.agrifood.models.UnitSystemsInfo
+        :keyword api_input_parameters: List of apiInputParameters.
+        :paramtype api_input_parameters: list[str]
+        """
         super(DetailedInformation, self).__init__(**kwargs)
         self.api_name = api_name
         self.custom_parameters = custom_parameters
@@ -139,6 +168,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -181,6 +212,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -192,8 +225,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.agrifood.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.agrifood.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -203,9 +236,13 @@ class ErrorResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.agrifood.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -241,6 +278,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -278,6 +317,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -316,7 +357,7 @@ class Extension(ProxyResource):
         'type': {'readonly': True},
         'system_data': {'readonly': True},
         'e_tag': {'readonly': True},
-        'extension_id': {'readonly': True, 'pattern': r'^[A-za-z]{3,50}[.][A-za-z]{3,100}$'},
+        'extension_id': {'readonly': True, 'pattern': r'^[a-zA-Z]{3,50}[.][a-zA-Z]{3,100}$'},
         'extension_category': {'readonly': True},
         'installed_extension_version': {'readonly': True, 'pattern': r'^([1-9]|10).\d$'},
         'extension_auth_link': {'readonly': True},
@@ -340,6 +381,8 @@ class Extension(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(Extension, self).__init__(**kwargs)
         self.system_data = None
         self.e_tag = None
@@ -355,8 +398,8 @@ class ExtensionListResponse(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of requested objects.
-    :type value: list[~azure.mgmt.agrifood.models.Extension]
+    :ivar value: List of requested objects.
+    :vartype value: list[~azure.mgmt.agrifood.models.Extension]
     :ivar next_link: Continuation link (absolute URI) to the next page of results in the list.
     :vartype next_link: str
     """
@@ -373,9 +416,13 @@ class ExtensionListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Extension"]] = None,
+        value: Optional[List["_models.Extension"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of requested objects.
+        :paramtype value: list[~azure.mgmt.agrifood.models.Extension]
+        """
         super(ExtensionListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -396,10 +443,10 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     """
 
     _validation = {
@@ -424,6 +471,12 @@ class TrackedResource(Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(TrackedResource, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -444,16 +497,16 @@ class FarmBeats(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Required. The geo-location where the resource lives.
+    :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.agrifood.models.SystemData
     :ivar instance_uri: Uri of the FarmBeats instance.
     :vartype instance_uri: str
-    :ivar provisioning_state: FarmBeats instance provisioning state. Possible values include:
-     "Succeeded", "Failed".
+    :ivar provisioning_state: FarmBeats instance provisioning state. Known values are: "Succeeded",
+     "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.agrifood.models.ProvisioningState
     """
 
@@ -485,6 +538,12 @@ class FarmBeats(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required. The geo-location where the resource lives.
+        :paramtype location: str
+        """
         super(FarmBeats, self).__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.instance_uri = None
@@ -537,7 +596,7 @@ class FarmBeatsExtension(ProxyResource):
         'type': {'readonly': True},
         'system_data': {'readonly': True},
         'target_resource_type': {'readonly': True},
-        'farm_beats_extension_id': {'readonly': True, 'max_length': 100, 'min_length': 2, 'pattern': r'^[A-za-z]{3,50}[.][A-za-z]{3,100}$'},
+        'farm_beats_extension_id': {'readonly': True, 'max_length': 100, 'min_length': 2, 'pattern': r'^[a-zA-Z]{3,50}[.][a-zA-Z]{3,100}$'},
         'farm_beats_extension_name': {'readonly': True, 'max_length': 100, 'min_length': 2},
         'farm_beats_extension_version': {'readonly': True, 'max_length': 100, 'min_length': 2, 'pattern': r'^([1-9]|10).\d$'},
         'publisher_id': {'readonly': True, 'max_length': 100, 'min_length': 2},
@@ -569,6 +628,8 @@ class FarmBeatsExtension(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(FarmBeatsExtension, self).__init__(**kwargs)
         self.system_data = None
         self.target_resource_type = None
@@ -588,8 +649,8 @@ class FarmBeatsExtensionListResponse(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of requested objects.
-    :type value: list[~azure.mgmt.agrifood.models.FarmBeatsExtension]
+    :ivar value: List of requested objects.
+    :vartype value: list[~azure.mgmt.agrifood.models.FarmBeatsExtension]
     :ivar next_link: Continuation link (absolute URI) to the next page of results in the list.
     :vartype next_link: str
     """
@@ -606,9 +667,13 @@ class FarmBeatsExtensionListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["FarmBeatsExtension"]] = None,
+        value: Optional[List["_models.FarmBeatsExtension"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of requested objects.
+        :paramtype value: list[~azure.mgmt.agrifood.models.FarmBeatsExtension]
+        """
         super(FarmBeatsExtensionListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -619,8 +684,8 @@ class FarmBeatsListResponse(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of requested objects.
-    :type value: list[~azure.mgmt.agrifood.models.FarmBeats]
+    :ivar value: List of requested objects.
+    :vartype value: list[~azure.mgmt.agrifood.models.FarmBeats]
     :ivar next_link: Continuation link (absolute URI) to the next page of results in the list.
     :vartype next_link: str
     """
@@ -637,9 +702,13 @@ class FarmBeatsListResponse(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["FarmBeats"]] = None,
+        value: Optional[List["_models.FarmBeats"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of requested objects.
+        :paramtype value: list[~azure.mgmt.agrifood.models.FarmBeats]
+        """
         super(FarmBeatsListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -648,10 +717,10 @@ class FarmBeatsListResponse(msrest.serialization.Model):
 class FarmBeatsUpdateRequestModel(msrest.serialization.Model):
     """FarmBeats update request.
 
-    :param location: Geo-location where the resource lives.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Geo-location where the resource lives.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -666,6 +735,12 @@ class FarmBeatsUpdateRequestModel(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Geo-location where the resource lives.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(FarmBeatsUpdateRequestModel, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -682,14 +757,14 @@ class Operation(msrest.serialization.Model):
     :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
-    :param display: Localized display information for this particular operation.
-    :type display: ~azure.mgmt.agrifood.models.OperationDisplay
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.agrifood.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
-     "system", "user,system".
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     "user,system".
     :vartype origin: str or ~azure.mgmt.agrifood.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Possible values include: "Internal".
+     internal only APIs. Known values are: "Internal".
     :vartype action_type: str or ~azure.mgmt.agrifood.models.ActionType
     """
 
@@ -711,9 +786,13 @@ class Operation(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.agrifood.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.is_data_action = None
@@ -759,6 +838,8 @@ class OperationDisplay(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -791,6 +872,8 @@ class OperationListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -799,20 +882,20 @@ class OperationListResult(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.agrifood.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.agrifood.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.mgmt.agrifood.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.agrifood.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -828,13 +911,29 @@ class SystemData(msrest.serialization.Model):
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.agrifood.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.agrifood.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -849,10 +948,10 @@ class UnitSystemsInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key: Required. UnitSystem key sent as part of ProviderInput.
-    :type key: str
-    :param values: Required. List of unit systems supported by this data provider.
-    :type values: list[str]
+    :ivar key: Required. UnitSystem key sent as part of ProviderInput.
+    :vartype key: str
+    :ivar values: Required. List of unit systems supported by this data provider.
+    :vartype values: list[str]
     """
 
     _validation = {
@@ -872,6 +971,12 @@ class UnitSystemsInfo(msrest.serialization.Model):
         values: List[str],
         **kwargs
     ):
+        """
+        :keyword key: Required. UnitSystem key sent as part of ProviderInput.
+        :paramtype key: str
+        :keyword values: Required. List of unit systems supported by this data provider.
+        :paramtype values: list[str]
+        """
         super(UnitSystemsInfo, self).__init__(**kwargs)
         self.key = key
         self.values = values
